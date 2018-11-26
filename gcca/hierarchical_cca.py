@@ -10,8 +10,8 @@ from .cca import CCA
 import logging
 import h5py
 
-class HierarchicalCCA(GCCA):
 
+class HierarchicalCCA(GCCA):
     def __init__(self, n_components=2, reg_param=0.1):
         GCCA.__init__(self, n_components, reg_param)
 
@@ -34,7 +34,6 @@ class HierarchicalCCA(GCCA):
         z_all = np.vstack([z0, z1])
         x_dup = np.vstack([x2, x2])
         self.cca2.fit(z_all, x_dup)
-
 
     def transform(self, x0, x1, x2):
 
@@ -94,7 +93,6 @@ class HierarchicalCCA(GCCA):
                 for i, z in enumerate(self.cca2.z_list):
                     z_grp2.create_dataset(str(i), data=z)
 
-
             if len(self.z_list) != 0:
                 z_grp3 = f.create_group("z_list_all")
                 for i, z in enumerate(self.z_list):
@@ -113,16 +111,22 @@ class HierarchicalCCA(GCCA):
             self.cca1.data_num = f["data_num1"].value
             self.cca2.data_num = f["data_num2"].value
 
-            self.cca1.cov_mat = [[np.array([]) for col in range(self.cca1.data_num)] for row in range(self.cca1.data_num)]
-            self.cca2.cov_mat = [[np.array([]) for col in range(self.cca2.data_num)] for row in range(self.cca2.data_num)]
+            self.cca1.cov_mat = [[
+                np.array([]) for col in range(self.cca1.data_num)
+            ] for row in range(self.cca1.data_num)]
+            self.cca2.cov_mat = [[
+                np.array([]) for col in range(self.cca2.data_num)
+            ] for row in range(self.cca2.data_num)]
 
             for i in range(self.cca1.data_num):
                 for j in range(self.cca1.data_num):
-                    self.cca1.cov_mat[i][j] = f["cov_mat1/" + str(i) + "_" + str(j)]
+                    self.cca1.cov_mat[i][j] = f["cov_mat1/" + str(i) + "_" +
+                                                str(j)]
 
             for i in range(self.cca2.data_num):
                 for j in range(self.cca2.data_num):
-                    self.cca2.cov_mat[i][j] = f["cov_mat2/" + str(i) + "_" + str(j)]
+                    self.cca2.cov_mat[i][j] = f["cov_mat2/" + str(i) + "_" +
+                                                str(j)]
 
             self.cca1.h_list = [None] * self.data_num
             for i in range(self.cca1.data_num):
@@ -149,6 +153,7 @@ class HierarchicalCCA(GCCA):
                     self.z_list[i] = f["z_list_all/" + str(i)].value
 
             f.flush()
+
 
 def main():
     # set log level
@@ -182,6 +187,7 @@ def main():
     # calc correlations
     hcca.calc_correlations()
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
 
     main()
